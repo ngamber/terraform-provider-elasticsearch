@@ -141,7 +141,7 @@ func testCheckElasticsearchComposableIndexTemplateDestroy(s *terraform.State) er
 
 		switch client := esClient.(type) {
 		case *elastic7.Client:
-			_, err = client.IndexGetTemplate(rs.Primary.ID).Do(context.TODO())
+			_, err = client.IndexGetIndexTemplate(rs.Primary.ID).Do(context.TODO())
 		default:
 			err = errors.New("/_index_template endpoint only supported on ES >= 7.8")
 		}
@@ -165,7 +165,7 @@ resource "elasticsearch_composable_index_template" "test" {
   "template": {
     "settings": {
       "index": {
-        "number_of_shards": 1
+        "number_of_shards": "1"
       }
     },
     "mappings": {
@@ -185,7 +185,11 @@ resource "elasticsearch_composable_index_template" "test" {
   },
   "priority": 200,
   "version": 3,
-  "data_stream": {}
+  "data_stream": {
+  	"timestamp_field": {
+  		"name": "@timestamp"
+		}
+  }
 }
 EOF
 }
